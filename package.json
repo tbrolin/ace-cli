@@ -1,0 +1,15 @@
+{
+  "name": "ace-cli",
+  "version": "0.1.0",
+  "description": "ace cli tools",
+  "main": "index.js",
+  "author": "",
+  "license": "ISC",
+  "bin": {
+    "ace": "./index.js"
+  },
+  "dependencies": {
+    "axios": "^0.18.0",
+    "commander": "^2.17.1"
+  }
+}
