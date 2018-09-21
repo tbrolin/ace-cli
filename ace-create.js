@@ -53,7 +53,6 @@ cmd
       }
     })
     .catch (function (error) {
-      // console.error ('Could not fetch content -', error);
       let msg = error.response.status || 'NO_STATUS';
       if (error && error.response && error.response.data) {
         msg += ' - ' + error.response.data.message;
