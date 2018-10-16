@@ -1,7 +1,7 @@
 {
-  "name": "atex-ace-cli",
+  "name": "@atex/ace-cli",
   "version": "0.1.0",
-  "description": "ace cli tools",
+  "description": "ace cli tools using ace REST api",
   "main": "index.js",
   "author": "tbrolin",
   "license": "ISC",
