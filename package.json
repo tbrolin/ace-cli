@@ -6,6 +6,7 @@
   "author": "tbrolin",
   "license": "ISC",
   "repository": "github:tbrolin/ace-cli",
+  "bugs": "https://github.com/tbrolin/ace-cli/issues",
   "bin": {
     "ace": "./index.js"
   },
