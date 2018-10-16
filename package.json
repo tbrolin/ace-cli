@@ -5,6 +5,7 @@
   "main": "index.js",
   "author": "tbrolin",
   "license": "ISC",
+  "repository": "github:tbrolin/ace-cli",
   "bin": {
     "ace": "./index.js"
   },
