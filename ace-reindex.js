@@ -7,7 +7,7 @@ const cmd = require ('commander'),
 cmd
   .usage ('[options]')
   .option ('-c, --content-type <content-type>', 'Reindex only content of type content-type')
-  .option ('-t, --token <token>]', 'use token, if not provided trying to use $TOKEN from environment')
+  .option ('-t, --token <token>', 'use token, if not provided trying to use $TOKEN from environment')
   .option ('-P --port <port>', 'host port', '8080')
   .option ('-H --host <host>', 'host', 'localhost')
   .option ('-S --service-path <path>', 'path to service', '/content-service')

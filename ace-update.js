@@ -5,7 +5,7 @@ const cmd = require('commander'),
   axios = require('axios');
 
 cmd
-  .usage ('[options] data')
+  .usage ('[options] <data> <matcher>')
   .option ('-t, --token <token>', 'use token, if not provided trying to use $TOKEN from environment')
   .option ('-o, --output-format <format>', 'format of output (raw | pretty | console)','pretty')
   .option ('-P --port <port>', 'host port', '8080')
@@ -15,6 +15,7 @@ cmd
 
   let token = cmd.token || process.env.TOKEN,
       data = cmd.args[0],
+      matcher = cmd.args[1],
       outputFormat = cmd.outputFormat,
       params = {},
       url = 'http://' + cmd.host + ':' + cmd.port + cmd.path + '/content';
@@ -41,9 +42,9 @@ cmd
   }
 
 
-  axios.post (url, data,
+  axios.put (url, data,
     { headers: { 'content-type': 'application/json',
-                 'x-auth-token': token },
+                 'x-auth-token': token, 'etag': matcher },
       params: params })
     .then (function (response) {
       if (outputFormat === 'raw') {

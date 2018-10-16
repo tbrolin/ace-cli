@@ -71,29 +71,4 @@ cmd
       console.error (error.message);
       process.exit (1);
   }
-
-/*
-  axios.post (url, data,
-    { headers: { 'content-type': 'application/json',
-                 'x-auth-token': token },
-      params: params })
-    .then (function (response) {
-      if (outputFormat === 'raw') {
-        console.log (JSON.stringify(response.data));
-      } else if (outputFormat === 'pretty') {
-        console.log (JSON.stringify(response.data, null, 2));
-      } else if (outputFormat === 'console') {
-        console.dir (response.data, { depth: null, colors: true });
-      } else {
-        console.error ('Unknown output format "' + outputFormat + '". Defaulting to "pretty"');
-        console.log (JSON.stringify(response.data, null, 2));
-      }
-    })
-    .catch (function (error) {
-      // console.error ('Could not create content -', error);
-      let msg = error.response.status || 'NO_STATUS';
-      if (error && error.response && error.response.data) {
-        msg += ' - ' + error.response.data.message;
-      }
-      console.error (msg);
-    }); */
+  
