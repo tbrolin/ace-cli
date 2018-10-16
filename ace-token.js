@@ -9,7 +9,7 @@ cmd
   .option ('-p, --password <password>', 'password', '123456')
   .option ('-P --port <port>', 'host port', '8080')
   .option ('-H --host <host>', 'host', 'localhost')
-  .option ('-W --path <path>', 'path to service', '/content-service')
+  .option ('-S --path <path>', 'path to service', '/content-service')
   .parse (process.argv);
 
   let url = 'http://' + cmd.host + ':' + cmd.port + cmd.path + '/security/token';
