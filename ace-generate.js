@@ -24,8 +24,17 @@ cmd
       url = 'http://' + cmd.host + ':' + cmd.port + cmd.path + '/content';
 
   if (!token) {
-    console.error ('Cannot make request - no token present');
+    console.error ('ERROR: Cannot make request - no token present');
     cmd.help ();
+  }
+
+  if (isNaN(numberOfContent)) {
+    if (cmd.args[1] === undefined) {
+      numberOfContent = 1;
+    } else {
+      console.error ('ERROR: numberOfContent must be a positive integer.');
+      cmd.help ();
+    }
   }
 
   try {
@@ -47,28 +56,31 @@ cmd
       });
     }
 
-    const generateData = doT.template (template);
-    let counter = 0;
-    const intervalId = setInterval (function () {
-      counter++;
-      if (counter === numberOfContent) {
-        clearInterval(intervalId);
-        createContent (generateData ({ uniq: uuid () }))
-          .then (function () {
-            process.stdout.clearLine();
-            process.stdout.cursorTo(0);
-            process.stdout.write(counter + '/' + numberOfContent + ' - Done.\n') ;
-          });
-      } else {
-        createContent (generateData ({ uniq: uuid () }));
-        process.stdout.clearLine();
-        process.stdout.cursorTo(0);
-        process.stdout.write(counter + '/' + numberOfContent);
-      }
-    }, 50);
-
+    if (numberOfContent > 0) {
+      const generateData = doT.template (template);
+      let counter = 0;
+      const intervalId = setInterval (function () {
+        counter++;
+        if (counter >= numberOfContent) {
+          clearInterval(intervalId);
+          createContent (generateData ({ uniq: uuid () }))
+            .then (function () {
+              process.stdout.clearLine();
+              process.stdout.cursorTo(0);
+              process.stdout.write(counter + '/' + numberOfContent + ' - Done.\n') ;
+            });
+        } else {
+          createContent (generateData ({ uniq: uuid () }));
+          process.stdout.clearLine();
+          process.stdout.cursorTo(0);
+          process.stdout.write(counter + '/' + numberOfContent);
+        }
+      }, 50);
+    } else {
+      console.log ('0/0 - No content generated');
+    }
   } catch (error) {
       console.error (error.message);
       process.exit (1);
   }
-  
+
