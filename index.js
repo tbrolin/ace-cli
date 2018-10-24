@@ -13,6 +13,7 @@ cmd
   .command ('reindex', 'Issue a reindexing of content')
   .command ('token', 'Get auth token')
   .command ('taxonomy [id] [depth]', 'Read a taxonomy structure. No argument lists all available taxonomies.')
+  .command ('type [type]', 'List or show information about types in the system')
   .command ('variants [variant]', 'Lists variants in the system or shows [variant] configuration.')
   .command ('config <config-id>', 'Read the configuration of config-id')
   .parse (process.argv);
