@@ -9,6 +9,7 @@ const cmd = require('commander'),
 cmd
   .usage ('[options] <template> <numberOfContent>')
   .description ('Creates numberOfContent number of content from template.')
+  .option ('--interval <ms>', 'Set the delay between generations', 50)
   .option ('-t, --token <token>', 'use token, if not provided trying to use $TOKEN from environment')
   .option ('-o, --output-format <format>', 'format of output (raw | pretty | console)','pretty')
   .option ('-P --port <port>', 'host port', '8080')
@@ -24,8 +25,25 @@ cmd
       url = 'http://' + cmd.host + ':' + cmd.port + cmd.path + '/content';
 
   if (!token) {
-    console.error ('Cannot make request - no token present');
+    console.error ('ERROR: Cannot make request - no token present');
     cmd.help ();
+  }
+
+  if (isNaN (numberOfContent)) {
+    if (cmd.args[1] === undefined) {
+      numberOfContent = 1;
+    } else {
+      console.error ('ERROR: numberOfContent must be a positive integer.');
+      cmd.help ();
+    }
+  }
+
+  if (!Number.isInteger(cmd.interval)) {
+    cmd.interval = parseInt(cmd.interval);
+    if (isNaN (cmd.interval)) {
+      console.error ('ERROR: --interval must be a positive integer');
+      cmd.help ();
+    }
   }
 
   try {
@@ -47,28 +65,31 @@ cmd
       });
     }
 
-    const generateData = doT.template (template);
-    let counter = 0;
-    const intervalId = setInterval (function () {
-      counter++;
-      if (counter === numberOfContent) {
-        clearInterval(intervalId);
-        createContent (generateData ({ uniq: uuid () }))
-          .then (function () {
-            process.stdout.clearLine();
-            process.stdout.cursorTo(0);
-            process.stdout.write(counter + '/' + numberOfContent + ' - Done.\n') ;
-          });
-      } else {
-        createContent (generateData ({ uniq: uuid () }));
-        process.stdout.clearLine();
-        process.stdout.cursorTo(0);
-        process.stdout.write(counter + '/' + numberOfContent);
-      }
-    }, 50);
-
+    if (numberOfContent > 0) {
+      const generateData = doT.template (template);
+      let counter = 0;
+      const intervalId = setInterval (function () {
+        counter++;
+        if (counter >= numberOfContent) {
+          clearInterval(intervalId);
+          createContent (generateData ({ uniq: uuid () }))
+            .then (function () {
+              process.stdout.clearLine();
+              process.stdout.cursorTo(0);
+              process.stdout.write(counter + '/' + numberOfContent + ' - Done.\n') ;
+            });
+        } else {
+          createContent (generateData ({ uniq: uuid () }));
+          process.stdout.clearLine();
+          process.stdout.cursorTo(0);
+          process.stdout.write(counter + '/' + numberOfContent);
+        }
+      }, cmd.interval);
+    } else {
+      console.log ('0/0 - No content generated');
+    }
   } catch (error) {
       console.error (error.message);
       process.exit (1);
   }
-  
+
