@@ -8,7 +8,8 @@ cmd
   .usage ('[options] [type]')
   .description ('List ace types in the system or if type is provided, show info about that type.')
   .option ('-v --verbose', 'Get expanded type info when listing types', false)
-  .option ('--is-content-type <true|false>', 'If provided, filter types by if they are a content type or not, when listing types', undefined)
+  .option ('-r --recursive', 'Include enclosed types in response', false)
+  .option ('--content-types <bool>', 'If provided, filter types by if they are a content type or not, when listing types', undefined)
   .option ('-t, --token <token>', 'use token, if not provided trying to use $TOKEN from environment')
   .option ('-o, --output-format <format>', 'format of output (raw | pretty | console)','pretty')
   .option ('-i, --include-headers', 'Include the response headers in the output')
@@ -38,9 +39,12 @@ cmd
     url = `${url}/${type}`;
   }
 
-  console.log(cmd.isContentType);
-  if (cmd.isContentType !== undefined) {
-    params.isContentType = cmd.isContentType === 'false' ? false : true;
+  if (cmd.recursive) {
+      params.recursive = true;
+  }
+
+  if (cmd.contentTypes !== undefined) {
+    params.isContentType = cmd.contentTypes === 'false' ? false : true;
   }
 
 
@@ -53,7 +57,7 @@ cmd
       let output = response.data;
 
       if (cmd.includeHeaders) {
-        output['http-headers'] = response.headers;
+        console.error(response.headers);
       }
 
       if (outputFormat === 'raw') {
