@@ -68,6 +68,7 @@ cmd
     if (numberOfContent > 0) {
       const generateData = doT.template (template);
       let counter = 0;
+      console.time('duration');
       const intervalId = setInterval (function () {
         counter++;
         if (counter >= numberOfContent) {
@@ -77,6 +78,7 @@ cmd
               process.stdout.clearLine();
               process.stdout.cursorTo(0);
               process.stdout.write(counter + '/' + numberOfContent + ' - Done.\n') ;
+              console.timeEnd ('duration');
             });
         } else {
           createContent (generateData ({ uniq: uuid () }));
