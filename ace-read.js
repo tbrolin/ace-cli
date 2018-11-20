@@ -49,7 +49,6 @@ cmd
 
   if (cmd.metadata) {
     url += '/metadata';
-    console.log (url);
   }
 
   axios.get (url,
