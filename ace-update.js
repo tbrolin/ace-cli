@@ -21,13 +21,18 @@ cmd
       url = 'http://' + cmd.host + ':' + cmd.port + cmd.path + '/content';
 
   if (!token) {
-    console.error ('Cannot make request - no token present');
+    console.error ('ERROR: Cannot make request - no token present');
     cmd.help ();
   }
 
   if (!data) {
-    console.error ('No data provided.');
+    console.error ('ERROR: No data provided.');
     cmd.help ();
+  }
+
+  if (!matcher) {
+    console.error ('ERROR: No matcher provided.')
+    cmd.help();
   }
 
   try {
@@ -42,7 +47,7 @@ cmd
   }
 
 
-  axios.put (url, data,
+  axios.post (url, data,
     { headers: { 'content-type': 'application/json',
                  'x-auth-token': token, 'etag': matcher },
       params: params })
