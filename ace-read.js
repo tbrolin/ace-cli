@@ -1,11 +1,20 @@
 #!/usr/bin/env node
 
+function resolveArg (alias) {
+  let split = alias && alias.split (':') || [];
+  if (split.length > 1) {
+    return { alias: split[1], workspace: split[0] };
+  }
+  return { alias };
+}
+
 const cmd = require('commander'),
   version = require('./package.json').version,
   axios = require('axios');
 
 cmd
-  .usage ('[options] <alias> [view]')
+  .usage ('[options] [<workspaceId>:]<alias> [view]')
+  .description ('alias is on the format: namespace/alias, workspaceId and view are mutually exclusive, workspaceId takes precedence.')
   .option ('-t, --token <token>', 'use token, if not provided trying to use $TOKEN from environment')
   .option ('-o, --output-format <format>', 'format of output (raw | pretty | console)','pretty')
   .option ('-i, --include-headers', 'Include the response headers in the output')
@@ -17,7 +26,7 @@ cmd
   .parse (process.argv);
 
   let token = cmd.token || process.env.TOKEN,
-      alias = cmd.args[0],
+      { alias, workspace } = resolveArg (cmd.args[0]),
       view = cmd.args[1],
       outputFormat = cmd.outputFormat,
       params = {},
@@ -37,7 +46,12 @@ cmd
     cmd.help ();
   }
 
-  if (view) {
+  if (workspace) {
+    url += '/content/workspace/' + workspace + '/alias/' + alias;
+    if (view) {
+      console.warn ('WARNING: Getting workspace content on a view is not supported (view argument is ignored).');
+    }
+  } else if (view) {
     url += '/content/view/' + view + '/alias/' + alias;
   } else {
     url += '/content/alias/' + alias;
