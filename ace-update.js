@@ -4,8 +4,16 @@ const cmd = require('commander'),
   fs = require('fs'),
   axios = require('axios');
 
+function resolveArg (alias) {
+  let split = alias && alias.split (':') || [];
+  if (split.length > 1) {
+    return { alias: split[1], workspace: split[0] };
+  }
+  return { alias };
+}
+
 cmd
-  .usage ('[options] <data> <matcher>')
+  .usage ('[options] [<workspace>:]<alias> <data> <matcher>')
   .option ('-t, --token <token>', 'use token, if not provided trying to use $TOKEN from environment')
   .option ('-o, --output-format <format>', 'format of output (raw | pretty | console)','pretty')
   .option ('-P --port <port>', 'host port', '8080')
@@ -14,19 +22,20 @@ cmd
   .parse (process.argv);
 
   let token = cmd.token || process.env.TOKEN,
-      data = cmd.args[0],
-      matcher = cmd.args[1],
+      { alias, workspace } = resolveArg (cmd.args[0]),
+      data = cmd.args[1],
+      matcher = cmd.args[2],
       outputFormat = cmd.outputFormat,
       params = {},
       url = 'http://' + cmd.host + ':' + cmd.port + cmd.path + '/content';
 
   if (!token) {
-    console.error ('Cannot make request - no token present');
+    console.error ('ERROR: Cannot make request - no token present');
     cmd.help ();
   }
 
   if (!data) {
-    console.error ('No data provided.');
+    console.error ('ERROR: No data provided.');
     cmd.help ();
   }
 
@@ -41,12 +50,24 @@ cmd
       process.exit (1);
   }
 
+  let headers = { 'content-type': 'application/json',
+  'x-auth-token': token };
+
+  if (workspace) {
+    url += `/workspace/${workspace}/alias/${alias}`;
+  } else {
+    if (!matcher) {
+      console.error ('ERROR: A matcher is required.');
+      cmd.help ();
+    }
+    url += `/alias/${alias}`;
+    headers['If-Match'] = matcher;
+  }
 
   axios.put (url, data,
-    { headers: { 'content-type': 'application/json',
-                 'x-auth-token': token, 'etag': matcher },
-      params: params })
+    { headers, params })
     .then (function (response) {
+      console.log('hej');
       if (outputFormat === 'raw') {
         console.log (JSON.stringify(response.data));
       } else if (outputFormat === 'pretty') {
@@ -59,9 +80,13 @@ cmd
       }
     })
     .catch (function (error) {
+      console.error ('ERROR: ', error);
+      if (!error.response) {
+        console.error ('ERROR: ', error);
+      }
       let msg = error.response.status || 'NO_STATUS';
       if (error && error.response && error.response.data) {
         msg += ' - ' + error.response.data.message;
       }
-      console.error (msg);
+      console.error ('ERROR: ' + msg);
     });

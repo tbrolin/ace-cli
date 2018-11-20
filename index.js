@@ -9,6 +9,7 @@ cmd
   .description ('Collection of useful scripts when working with an ace system.')
   .command ('create', 'Create a content')
   .command ('read <alias> [view]', 'Read content by alias [from view]')
+  .command ('update <alias> <data> <matcher>', 'Update content by alias')
   .command ('version <versionId>', 'Read a specific version of a content')
   .command ('generate <template> <n>', 'Generate n content from template')
   .command ('reindex', 'Issue a reindexing of content')
