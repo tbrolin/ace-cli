@@ -25,6 +25,8 @@ cmd
   .option ('-S --path <path>', 'path to service, should always start with "/"', '/content-service')
   .parse (process.argv);
 
+  const DEBUG = process.env.DEBUG;
+
   let token = cmd.token || process.env.TOKEN,
       { alias, workspace } = resolveArg (cmd.args[0]),
       view = cmd.args[1],
@@ -70,6 +72,9 @@ cmd
                  'x-auth-token': token },
       params: params })
     .then (function (response) {
+
+      DEBUG && console.error (response);
+
       let output = response.data;
 
       if (cmd.includeHeaders) {
