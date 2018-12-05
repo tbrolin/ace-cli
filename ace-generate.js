@@ -24,6 +24,8 @@ cmd
       params = {},
       url = 'http://' + cmd.host + ':' + cmd.port + cmd.path + '/content';
 
+  console.error (url);
+
   if (!token) {
     console.error ('ERROR: Cannot make request - no token present');
     cmd.help ();
@@ -59,16 +61,15 @@ cmd
         if (error.response && error.response.data) {
           console.error(error.response.data.message);
         } else {
-          console.log(error);
+          Object.keys().forEach((key) => { console.error (key); });
         }
-        process.exit(1);
       });
     }
 
     if (numberOfContent > 0) {
       const generateData = doT.template (template);
       let counter = 0;
-      console.time('duration');
+      console.time ('Duration');
       const intervalId = setInterval (function () {
         counter++;
         if (counter >= numberOfContent) {
@@ -78,7 +79,7 @@ cmd
               process.stdout.clearLine();
               process.stdout.cursorTo(0);
               process.stdout.write(counter + '/' + numberOfContent + ' - Done.\n') ;
-              console.timeEnd ('duration');
+              console.timeEnd ('Duration');
             });
         } else {
           createContent (generateData ({ uniq: uuid () }));

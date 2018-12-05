@@ -5,11 +5,10 @@ const cmd = require('commander'),
   axios = require('axios');
 
 cmd
-  .usage ('[options] <alias> [view]')
+  .usage ('[options] <versionId>')
   .option ('-t, --token <token>', 'use token, if not provided trying to use $TOKEN from environment')
   .option ('-o, --output-format <format>', 'format of output (raw | pretty | console)','pretty')
   .option ('-i, --include-headers', 'Include the response headers in the output')
-  .option ('--metadata', 'read content metadata')
   .option ('-v, --variant <variant>', 'get content in variant')
   .option ('-P --port <port>', 'host port', '8080')
   .option ('-H --host <host>', 'host', 'localhost')
@@ -17,40 +16,31 @@ cmd
   .parse (process.argv);
 
   let token = cmd.token || process.env.TOKEN,
-      alias = cmd.args[0],
-      view = cmd.args[1],
+      versionId = cmd.args[0],
       outputFormat = cmd.outputFormat,
       params = {},
       url = 'http://' + cmd.host + ':' + cmd.port;
-
-  if (cmd.path && cmd.path !== '/') {
-    url = url + cmd.path;
-  }
 
   if (!token) {
     console.error ('Cannot make request - no token present');
     cmd.help ();
   }
 
-  if (!alias) {
-    console.error ('Cannot make request - no alias present');
+  if (!versionId) {
+    console.error ('Cannot make request - no versionId present');
     cmd.help ();
   }
 
-  if (view) {
-    url += '/content/view/' + view + '/alias/' + alias;
-  } else {
-    url += '/content/alias/' + alias;
+
+  if (cmd.path && cmd.path !== '/') {
+    url = url + cmd.path + '/content/version/' + versionId;
   }
 
   if (cmd.variant) {
     params.variant = cmd.variant;
   }
 
-  if (cmd.metadata) {
-    url += '/metadata';
-  }
-
+  console.log(url);
   axios.get (url,
     { headers: { 'content-type': 'application/json',
                  'x-auth-token': token },
