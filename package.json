@@ -14,6 +14,7 @@
     "axios": "^0.18.0",
     "commander": "^2.17.1",
     "dot": "^1.1.2",
+    "kafka-node": "^3.0.1",
     "uuid": "^3.3.2"
   },
   "devDependencies": {
