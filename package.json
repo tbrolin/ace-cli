@@ -10,6 +10,9 @@
   "bin": {
     "ace": "./index.js"
   },
+  "scripts": {
+    "release": "release-it"
+  },
   "dependencies": {
     "axios": "^0.18.1",
     "commander": "^2.17.1",
