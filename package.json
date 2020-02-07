@@ -11,13 +11,13 @@
     "ace": "./index.js"
   },
   "dependencies": {
-    "axios": "^0.18.0",
+    "axios": "^0.18.1",
     "commander": "^2.17.1",
     "dot": "^1.1.2",
     "kafka-node": "^3.0.1",
     "uuid": "^3.3.2"
   },
   "devDependencies": {
-    "release-it": "^7.6.2"
+    "release-it": "^12.4.3"
   }
 }
