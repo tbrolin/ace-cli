@@ -14,7 +14,7 @@
     "release": "release-it"
   },
   "dependencies": {
-    "axios": "^0.18.1",
+    "axios": "^0.21.1",
     "commander": "^2.17.1",
     "dot": "^1.1.2",
     "kafka-node": "^3.0.1",
