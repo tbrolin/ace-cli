@@ -8,11 +8,11 @@ cmd
   .option ('-u, --username <username>', 'username', 'admin')
   .option ('-p, --password <password>', 'password', '123456')
   .option ('-P --port <port>', 'host port', '8080')
-  .option ('-H --host <host>', 'host', 'localhost')
+  .option ('-H --host <host>', 'host', 'http://localhost')
   .option ('-S --path <path>', 'path to service', '/content-service')
   .parse (process.argv);
 
-  let url = 'http://' + cmd.host + ':' + cmd.port + cmd.path + '/security/token';
+  let url = cmd.host + ':' + cmd.port + cmd.path + '/security/token';
 
   axios.post (url,
     { username: cmd.username, password: cmd.password },

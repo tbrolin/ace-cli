@@ -5,7 +5,8 @@ const cmd = require('commander'),
   axios = require('axios');
 
 cmd
-  .usage ('[options] <data> <matcher>')
+  .usage ('[options] <data | @filepath> <matcher>')
+  .option ('-m, --updateMode <mode>', '[merge | update | replace]')
   .option ('-t, --token <token>', 'use token, if not provided trying to use $TOKEN from environment')
   .option ('-o, --output-format <format>', 'format of output (raw | pretty | console)','pretty')
   .option ('-P --port <port>', 'host port', '8080')
@@ -17,6 +18,7 @@ cmd
       data = cmd.args[0],
       matcher = cmd.args[1],
       outputFormat = cmd.outputFormat,
+      updateMode = cmd.updateMode || 'update',
       params = {},
       url = 'http://' + cmd.host + ':' + cmd.port + cmd.path + '/content';
 
@@ -41,10 +43,12 @@ cmd
       process.exit (1);
   }
 
+  delete data.status
+  url += '/alias/' + data.system.id + '?updateMode=' + updateMode
 
   axios.put (url, data,
     { headers: { 'content-type': 'application/json',
-                 'x-auth-token': token, 'etag': matcher },
+                 'x-auth-token': token, 'if-match': matcher },
       params: params })
     .then (function (response) {
       if (outputFormat === 'raw') {
@@ -59,9 +63,14 @@ cmd
       }
     })
     .catch (function (error) {
-      let msg = error.response.status || 'NO_STATUS';
-      if (error && error.response && error.response.data) {
-        msg += ' - ' + error.response.data.message;
+      if (error.response) {
+        let msg = error.response.status || 'NO_STATUS';
+        if (error && error.response && error.response.data) {
+          msg += ' - ' + error.response.data.message;
+        }
+        console.error (msg, error);
+      } else {
+        console.error ('Something went wrong', error);
       }
-      console.error (msg);
+
     });

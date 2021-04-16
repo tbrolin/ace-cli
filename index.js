@@ -16,6 +16,7 @@ cmd
   .command ('taxonomy [id] [depth]', 'Read a taxonomy structure. No argument lists all available taxonomies.')
   .command ('token', 'Get auth token')
   .command ('type [type]', 'List or show information about types in the system')
+  .command ('update <data> <matcher>', 'Update a content with <data>')
   .command ('variants [variant]', 'Lists variants in the system or shows [variant] configuration.')
   .command ('version <versionId>', 'Read a specific version of a content')
   .parse (process.argv);
