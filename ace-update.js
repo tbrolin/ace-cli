@@ -22,13 +22,12 @@ cmd
       params = {},
       url = 'http://' + cmd.host + ':' + cmd.port + cmd.path + '/content';
 
-  if (!token) {
-    console.error ('Cannot make request - no token present');
-    cmd.help ();
-  }
-
-  if (!data) {
-    console.error ('No data provided.');
+  if (!token || !data || !matcher) {
+    console.error();
+    !token && console.error ('  ERROR: No token present');
+    !data && console.error ('  ERROR: No data provided.');
+    !matcher && console.error ('  ERROR: No matcher provided.');
+    console.error ()
     cmd.help ();
   }
 
@@ -39,8 +38,10 @@ cmd
         data = JSON.parse (data);
     }
   } catch (error) {
-      console.error (error.message);
-      process.exit (1);
+      console.error ();
+      console.error (`  ERROR: ${error.message}`);
+      console.error ();
+      cmd.help ();
   }
 
   delete data.status
