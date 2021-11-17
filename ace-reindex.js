@@ -13,19 +13,26 @@ cmd
   .option ('-S --service-path <path>', 'path to service', '/content-service')
   .parse (process.argv);
 
-  const token = cmd.token || process.env.TOKEN,
+  const options = cmd.opts();
+
+  const token = options.token || process.env.TOKEN,
       alias = cmd.args[0],
-      outputFormat = cmd.outputFormat;
+      outputFormat = options.outputFormat;
 
   if (!token) {
     console.error ('Cannot make request - no token present');
     cmd.help ();
   }
 
-  const contentType = cmd.contentType ? '?contentType=' + cmd.contentType
-                                    : '';
+  let endpoint = '/full'
+  if (options.contentType) {
+    endpoint = `/contentType/${contentType}`
+  }
+  if (options.aliases) {
+    endpoint = `${endpoint}?aliases=${options.aliases}`
+  }
 
-  const url = 'http://' + cmd.host + ':' + cmd.port + cmd.servicePath + '/index/reindex' + contentType;
+  const url = `http://${options.host}:${options.port}${options.servicePath}/index/reindex${endpoint}`
 
   axios.post (url, {},
     { headers: { 'content-type': 'application/json',

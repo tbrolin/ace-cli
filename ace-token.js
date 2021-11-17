@@ -12,10 +12,11 @@ cmd
   .option ('-S --path <path>', 'path to service', '/content-service')
   .parse (process.argv);
 
-  let url = cmd.host + ':' + cmd.port + cmd.path + '/security/token';
+  const options = cmd.opts()
+  let url = options.host + ':' + options.port + options.path + '/security/token';
 
   axios.post (url,
-    { username: cmd.username, password: cmd.password },
+    { username: options.username, password: options.password },
     { headers: { 'content-type': 'application/json' } })
     .then (function (response) {
       console.log (response.data.token);

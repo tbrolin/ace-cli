@@ -14,13 +14,15 @@ cmd
   .option ('-S --path <path>', 'path to service', '/content-service')
   .parse (process.argv);
 
-  let token = cmd.token || process.env.TOKEN,
+  const options = cmd.opts()
+
+  let token = options.token || process.env.TOKEN,
       data = cmd.args[0],
       matcher = cmd.args[1],
-      outputFormat = cmd.outputFormat,
-      updateMode = cmd.updateMode || 'update',
+      outputFormat = options.outputFormat,
+      updateMode = options.updateMode || 'update',
       params = {},
-      url = 'http://' + cmd.host + ':' + cmd.port + cmd.path + '/content';
+      url = 'http://' + options.host + ':' + options.port + options.path + '/content';
 
   if (!token || !data || !matcher) {
     console.error();

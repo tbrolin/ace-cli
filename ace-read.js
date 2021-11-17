@@ -16,74 +16,76 @@ cmd
   .option ('-S --path <path>', 'path to service, should always start with "/"', '/content-service')
   .parse (process.argv);
 
-  let token = cmd.token || process.env.TOKEN,
-      alias = cmd.args[0],
-      view = cmd.args[1],
-      outputFormat = cmd.outputFormat,
-      params = {},
-      url = 'http://' + cmd.host + ':' + cmd.port;
+const options = cmd.opts();
 
-  if (cmd.path && cmd.path !== '/') {
-    url = url + cmd.path;
-  }
+let token = options.token || process.env.TOKEN,
+    alias = cmd.args[0],
+    view = cmd.args[1],
+    outputFormat = options.outputFormat,
+    params = {},
+    url = 'http://' + options.host + ':' + options.port;
 
-  if (!token) {
-    console.error ('Cannot make request - no token present');
-    cmd.help ();
-  }
+if (options.path && options.path !== '/') {
+  url = url + options.path;
+}
 
-  if (!alias) {
-    console.error ('Cannot make request - no alias present');
-    cmd.help ();
-  }
+if (!token) {
+  console.error ('Cannot make request - no token present');
+  cmd.help ();
+}
 
-  if (view) {
-    url += '/content/view/' + view + '/alias/' + alias;
-  } else {
-    url += '/content/alias/' + alias;
-  }
+if (!alias) {
+  console.error ('Cannot make request - no alias present');
+  cmd.help ();
+}
 
-  if (cmd.variant) {
-    params.variant = cmd.variant;
-  }
+if (view) {
+  url += '/content/view/' + view + '/alias/' + alias;
+} else {
+  url += '/content/alias/' + alias;
+}
 
-  if (cmd.metadata) {
-    url += '/metadata';
-  }
+if (options.variant) {
+  params.variant = options.variant;
+}
 
-  axios.get (url,
-    { headers: { 'content-type': 'application/json',
-                 'x-auth-token': token },
-      params: params })
-    .then (function (response) {
-      let output = response.data;
+if (options.metadata) {
+  url += '/metadata';
+}
 
-      if (cmd.includeHeaders) {
-        output['http-headers'] = response.headers;
+axios.get (url,
+  { headers: { 'content-type': 'application/json',
+                'x-auth-token': token },
+    params: params })
+  .then (function (response) {
+    let output = response.data;
+
+    if (options.includeHeaders) {
+      output['http-headers'] = response.headers;
+    }
+
+    if (outputFormat === 'raw') {
+      console.log (JSON.stringify(output));
+    } else if (outputFormat === 'pretty') {
+      console.log (JSON.stringify(output, null, 2));
+    } else if (outputFormat === 'console') {
+      console.dir (output, { depth: null, colors: true });
+    } else {
+      console.error ('Unknown output format "' + outputFormat + '". Defaulting to "pretty"');
+      console.log (JSON.stringify(output, null, 2));
+    }
+  })
+  .catch (function (error) {
+    // console.error ('Could not fetch content -', error);
+    if (error.response) {
+      if (error.response.status) {
+        console.error (error.response.status);
+      } 
+      if (error.response.data) {
+        console.error (error.response.data.message);
       }
-
-      if (outputFormat === 'raw') {
-        console.log (JSON.stringify(output));
-      } else if (outputFormat === 'pretty') {
-        console.log (JSON.stringify(output, null, 2));
-      } else if (outputFormat === 'console') {
-        console.dir (output, { depth: null, colors: true });
-      } else {
-        console.error ('Unknown output format "' + outputFormat + '". Defaulting to "pretty"');
-        console.log (JSON.stringify(output, null, 2));
-      }
-    })
-    .catch (function (error) {
-      // console.error ('Could not fetch content -', error);
-      if (error.response) {
-        if (error.response.status) {
-          console.error (error.response.status);
-        } 
-        if (error.response.data) {
-          console.error (error.response.data.message);
-        }
-      } else {
-        console.error (error.code);
-        console.error (error.config.url);
-      }
-    });
+    } else {
+      console.error (error.code);
+      console.error (error.config.url);
+    }
+  });

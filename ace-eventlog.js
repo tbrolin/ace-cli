@@ -12,24 +12,26 @@ cmd
   .option ('-H --host <host>', 'host', 'localhost')
   .parse (process.argv);
 
+const options = cmd.opts()
+
 let offset = 0;
 let topic = 'aceContentEvents'
 
-if (cmd.fromOffset || parseInt (cmd.fromOffset) === 0) {
-  cmd.fromBeginning = true;
-  offset = parseInt (cmd.fromOffset);
+if (options.fromOffset || parseInt (options.fromOffset) === 0) {
+  options.fromBeginning = true;
+  offset = parseInt (options.fromOffset);
 }
 
-if (cmd.system) {
+if (options.system) {
   topic = 'aceEvents';
 }
 
-const connectionString = cmd.host + ':' + cmd.port;  
+const connectionString = options.host + ':' + options.port;  
 const client = new kafka.KafkaClient(connectionString);
-const consumer = new kafka.Consumer (client, [{ topic, offset }], { groupId: cmd.loggerId, fromOffset: cmd.fromBeginning });
+const consumer = new kafka.Consumer (client, [{ topic, offset }], { groupId: options.loggerId, fromOffset: options.fromBeginning });
 
 consumer.on ('message', (message) => {
-  if (cmd.verbose) {
+  if (options.verbose) {
     console.log ();
     console.log (message);
   } else {
